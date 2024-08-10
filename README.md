@@ -21,7 +21,7 @@ First, you’ll need to bring this repository to your local machine:
 
 ```bash
 git clone https://github.com/sicmundu/chasm-wizzard.git
-cd chasm-node-adventure
+cd chasm-wizzard
 ```
 
 ### 2. Launch the Magic
