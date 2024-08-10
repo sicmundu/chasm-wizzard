@@ -19,19 +19,19 @@ This repository is home to a script that's going to be your trusty sidekick as y
 
 First, you’ll need to bring this repository to your local machine:
 
-\`\`\`bash
-git clone https://github.com/yourusername/chasm-node-adventure.git
+```bash
+git clone https://github.com/sicmundu/chasm-wizzard.git
 cd chasm-node-adventure
-\`\`\`
+```
 
 ### 2. Launch the Magic
 
 Next, fire up the script and watch the magic unfold:
 
-\`\`\`bash
+```bash
 chmod +x chasm.sh
 ./chasm.sh
-\`\`\`
+```
 
 ### 3. Share Some Secrets
 
