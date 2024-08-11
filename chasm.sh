@@ -14,6 +14,10 @@ sudo apt-get update
 sudo apt-get install -y ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/keyrings/docker.gpg > /dev/null
+if [ $? -ne 0 ]; then
+    echo -e "\e[31m❌ Failed to download Docker GPG key. Exiting.\e[0m"
+    exit 1
+fi
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" | \
@@ -25,6 +29,10 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 echo -e "\e[34m🌐 Opening up the tunnels with ngrok...\e[0m"
 if ! command -v ngrok &> /dev/null; then
     curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+    if [ $? -ne 0 ]; then
+        echo -e "\e[31m❌ Failed to download ngrok GPG key. Exiting.\e[0m"
+        exit 1
+    fi
     echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
     sudo apt-get update
     sudo apt-get install -y ngrok
@@ -40,9 +48,17 @@ read -p $'\e[33mEnter your ngrok Authtoken: \e[0m' NGROK_AUTHTOKEN
 
 # Step 5: ngrok Setup – Preparing Your Secret Passage
 ngrok config add-authtoken $NGROK_AUTHTOKEN
+if [ $? -ne 0 ]; then
+    echo -e "\e[31m❌ Failed to configure ngrok with the provided Authtoken. Exiting.\e[0m"
+    exit 1
+fi
 
 # Time to freshen up – Close any old ngrok sessions
 screen -ls | grep "ngrok_session" | cut -d. -f1 | awk '{print $1}' | xargs -I {} screen -S {} -X quit
+if screen -ls | grep -q "ngrok_session"; then
+    echo -e "\e[31m❌ Failed to terminate existing ngrok session. Exiting.\e[0m"
+    exit 1
+fi
 screen -dmS ngrok_session
 screen -S ngrok_session -p 0 -X stuff "ngrok http 3032\n"
 
@@ -54,6 +70,15 @@ WEBHOOK_URL="http://${EXTERNAL_IP}:3032"
 cd $HOME
 mkdir -p chasm
 cd chasm
+
+if [ -f ".env" ]; then
+    echo -e "\e[33m⚠️ The .env file already exists in the chasm directory. Do you want to overwrite it? (y/n)\e[0m"
+    read -p "Enter your choice: " choice
+    if [ "$choice" != "y" ]; then
+        echo -e "\e[31m🚫 Exiting without overwriting the .env file.\e[0m"
+        exit 1
+    fi
+fi
 
 cat <<EOF > .env
 PORT=3032
@@ -81,8 +106,16 @@ sudo ufw allow 3032
 # Step 8: Liftoff! – Launching Your Node (Prepare for greatness)
 echo -e "\e[34m🚀 Launching your Chasm Node into the wild...\e[0m"
 docker pull chasmtech/chasm-scout
-docker run -d --restart=always --env-file ./.env -p 3032:3032 --name scout chasmtech/chasm-scout
+if [ $? -ne 0 ]; then
+    echo -e “\e[31m❌ Failed to pull the Docker image. Exiting.\e[0m”
+    exit 1
+fi
+
+docker run -d –restart=always –env-file ./.env -p 3032:3032 –name scout chasmtech/chasm-scout
+if [ $? -ne 0 ]; then
+    echo -e “\e[31m❌ Failed to launch the Docker container. Exiting.\e[0m”
+    exit 1
+fi
 
 # And that’s a wrap!
 echo -e "\e[32m✅ Congratulations! Your Chasm Network Testnet Node is now live. Take a moment to bask in your awesomeness.\e[0m"
-echo -e "\e[31m⚠️ Just a heads up: If UFW is enabled, make sure your SSH port is open so you can keep an eye on things.\e[0m"
