@@ -1,6 +1,8 @@
 
 # Chasm Network: The Testnet Node Adventure 🧭
 
+Full guide: https://x.com/ImportantCrypto/status/1822554839873978398
+
 Welcome, brave explorer, to the **Chasm Network: The Testnet Node Adventure** repository! Here, you're about to embark on a thrilling journey to set up your very own Chasm Network Testnet Node. No dragons here—just a script, some humor, and a lot of node magic.
 
 ## What's This All About? 🤔
