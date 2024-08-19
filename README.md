@@ -1,6 +1,6 @@
 # Chasm Network: The Testnet Node Adventure 2.0 🧭
 
-Full guide: [link here]
+Full guide: [\[link here\]](https://x.com/ImportantCrypto/status/1822554839873978398)
 
 Welcome back, brave explorer, to the **Chasm Network: The Testnet Node Adventure 2.0**! Get ready for an even more epic journey as you set up your Chasm Network Testnet Node. No dragons, but we’ve added some serious firepower with our latest updates. 
 
